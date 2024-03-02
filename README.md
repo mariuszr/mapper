@@ -46,7 +46,7 @@ const mapSchema = {
             return `${first} ${last}`
         }
     },
-    // path to th source props and define the destination object
+    // path to the source props and define the destination object
     "private.user_schools.elementarySchool": "private_info.schools.elementary_school",
     "private.user_schools.highSchool": "private_info.schools.high_school",
     "private.user_schools.collagedSchool": {
