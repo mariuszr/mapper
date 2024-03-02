@@ -1,6 +1,6 @@
-> # The document is currently being created.
-
 # JavaScript Mapper Library
+
+> The document is currently being created.
 
 The small mapper library in JavaScript is a lightweight tool that simplifies the process of mapping data from a source dataset to a destination dataset. It allows developers to define custom mapping rules and apply them to the source dataset, transforming the data as needed. The library provides a simple and flexible way to handle complex data mapping tasks, making it easier to create efficient and maintainable code. With its intuitive syntax and minimal dependencies, the small mapper library is a valuable addition to any JavaScript project.
 
