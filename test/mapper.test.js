@@ -13,7 +13,7 @@ describe("mapper", () => {
     };
 
     const result = await mapping(src, mapSchema);
-    
+
     expect(src.foo).eq(result.foo_dest);
     expect(src.bar).eq(result.bar_dest);
   });
@@ -267,9 +267,7 @@ describe("mapper", () => {
     };
 
     // run multiple times to catch regex /g lastIndex issues
-    const results = await Promise.all(
-      Array.from({ length: 10 }, () => mapping(src, mapSchema)),
-    );
+    const results = await Promise.all(Array.from({ length: 10 }, () => mapping(src, mapSchema)));
 
     results.forEach((r) => {
       expect(r.tags).deep.eq(["x", "y"]);
@@ -350,9 +348,7 @@ describe("mapper", () => {
 
     await mapping(src, schema);
 
-    expect(_internal.pathCache.size).toBeLessThanOrEqual(
-      _internal.MAX_PATH_CACHE_ENTRIES,
-    );
+    expect(_internal.pathCache.size).toBeLessThanOrEqual(_internal.MAX_PATH_CACHE_ENTRIES);
   });
 
   it("should refresh cache entry order on hit", async () => {

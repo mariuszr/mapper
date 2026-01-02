@@ -45,7 +45,6 @@ const getObjectPropertyValue = (source, path, defaultValue) => {
   if (defaultValue === undefined) defaultValue = null;
   path = stringToPath(path);
 
-
   let value = source;
 
   for (let i = 0; i < path.length; i++) {
@@ -61,7 +60,6 @@ const setObjectProperties = (data = {}, property = {}) => {
     let dataStack = data;
 
     const isArray = regexEmptyBrackets.test(key) || false;
-
 
     if (isArray) {
       key = key?.replace(regexEmptyBrackets, "");
@@ -134,7 +132,6 @@ const mapArray = async (source, destination, srcKey, descKey) => {
     }
   }
 };
-
 
 const map = async (source, destination, srcKey, destKey) => {
   if (!isPlainObject(destKey)) return;
