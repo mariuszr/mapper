@@ -1,6 +1,10 @@
 # Mapper
 
-[![CI](../../actions/workflows/ci.yml/badge.svg)](../../actions/workflows/ci.yml)
+[![CI](https://github.com/mariuszr/mapper/actions/workflows/ci.yml/badge.svg)](https://github.com/mariuszr/mapper/actions/workflows/ci.yml)
+[![License](https://img.shields.io/github/license/mariuszr/mapper)](LICENSE)
+[![Last commit](https://img.shields.io/github/last-commit/mariuszr/mapper)](https://github.com/mariuszr/mapper/commits)
+[![Issues](https://img.shields.io/github/issues/mariuszr/mapper)](https://github.com/mariuszr/mapper/issues)
+[![PRs](https://img.shields.io/github/issues-pr/mariuszr/mapper)](https://github.com/mariuszr/mapper/pulls)
 
 A tiny mapping helper for turning one plain object into another using a declarative schema. It’s meant for the boring day‑to‑day stuff: renaming keys, building nested output objects, applying a transform, and providing defaults.
 
@@ -108,9 +112,80 @@ Result:
 }
 ```
 
+## API
+
+### `mapping(source, mapSchema)`
+
+Returns a new object created by applying `mapSchema` to `source`.
+
+Both `source` and `mapSchema` must be plain objects. Passing `null`, arrays, or primitives throws a `TypeError`.
+
+### Schema format
+
+Each key in `mapSchema` represents a source path. The value decides how that source value is written to the output:
+
+- **String**: destination path
+  - Example: `{ "user.name": "profile.fullName" }`
+- **Object rule**: `{ key, defaultValue, transform }`
+  - `key` (string): destination path
+  - `defaultValue` (any): used when source path is missing or when `transform` returns `undefined`
+  - `transform` (function): called as `transform({ source, value })`
+- **Array of rules**: apply multiple rules to the same source key
+  - Example: `{ id: ["userId", "audit.id"] }`
+
+### Paths
+
+- Dot notation is supported on both sides: `a.b.c`.
+- Source can use bracket indexes: `items[0].name`.
+- Destination can append to arrays using `[]`: `tags[]`.
+
+## More examples
+
+### Append to arrays (`[]`)
+
+```js
+const src = { t1: "a", t2: ["b", "c"] };
+const mapSchema = { t1: "tags[]", t2: "tags[]" };
+
+const out = await mapping(src, mapSchema);
+// { tags: ["a", "b", "c"] }
+```
+
+### Nested schema objects
+
+You can group rules under a source object (handy for big schemas):
+
+```js
+const src = { user: { name: "Ada", age: 31 } };
+
+const mapSchema = {
+  user: {
+    name: "profile.name",
+    age: "profile.age",
+  },
+};
+
+const out = await mapping(src, mapSchema);
+// { profile: { name: "Ada", age: 31 } }
+```
+
+### Default values
+
+```js
+const src = {};
+
+const mapSchema = {
+  missing: { key: "out", defaultValue: "D" },
+};
+
+const out = await mapping(src, mapSchema);
+// { out: "D" }
+```
+
 ## Notes
 
-- `mapping(source, mapSchema)` expects both arguments to be plain objects. If you pass `null`, an array, or a primitive, it throws a `TypeError`.
+- `mapping()` is intentionally small and focused. If a schema entry is `null`/number/boolean, it will be ignored.
+- Internals (like caching) are not part of the public API and may change.
 
 ## Development
 
