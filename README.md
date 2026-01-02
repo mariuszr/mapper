@@ -200,3 +200,7 @@ Run coverage:
 ```sh
 pnpm test:coverage
 ```
+
+## License
+
+MIT — see `LICENSE`.
