@@ -1,6 +1,6 @@
 {
   "name": "mapper",
-  "version": "1.0.0",
+  "version": "0.1.1",
   "author": "Mariusz Rosinski <mr@wyomee.com>",
   "description": "Tiny object-to-object mapping helper with declarative schema.",
   "main": "src/index.js",
