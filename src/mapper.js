@@ -139,7 +139,7 @@ const mapObject = async (source, destination, srcKey, descKey) => {
     let value = getObjectPropertyValue(source, srcKey, defaultValue);
 
     if (typeof transform === "function") {
-      value = transform({ source, value });
+      value = await transform({ source, value });
     }
 
     value ??= defaultValue;

@@ -130,7 +130,7 @@ Each key in `mapSchema` represents a source path. The value decides how that sou
 - **Object rule**: `{ key, defaultValue, transform }`
   - `key` (string): destination path
   - `defaultValue` (any): used when source path is missing or when `transform` returns `undefined`
-  - `transform` (function): called as `transform({ source, value })` (synchronous)
+  - `transform` (function): called as `transform({ source, value })` and may be sync or async (Promise)
 - **Array of rules**: apply multiple rules to the same source key
   - Example: `{ id: ["userId", "audit.id"] }`
 

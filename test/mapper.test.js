@@ -121,6 +121,26 @@ describe("mapper", () => {
     expect(`${src.foo}_${src.bar}${transformValue}`).eq(result.foo_dest);
   });
 
+  it("should support async transform", async () => {
+    const src = {
+      foo: "foo",
+    };
+
+    const mapSchema = {
+      foo: {
+        key: "foo_dest",
+        transform: async ({ value }) => {
+          await Promise.resolve();
+          return `${value}_async`;
+        },
+      },
+    };
+
+    const result = await mapping(src, mapSchema);
+
+    expect(result.foo_dest).eq("foo_async");
+  });
+
   it("should append values into destination arrays using []", async () => {
     const src = {
       tags1: "a",
