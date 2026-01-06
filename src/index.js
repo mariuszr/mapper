@@ -1,1 +1,5 @@
-module.exports.mapper = require("./mapper");
+const { mapping } = require("./mapper");
+
+module.exports = {
+  mapping,
+};

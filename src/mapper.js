@@ -42,16 +42,28 @@ const stringToPath = (path, regex = regexWithIndex) => {
 };
 
 const getObjectPropertyValue = (source, path, defaultValue) => {
-  if (defaultValue === undefined) defaultValue = null;
-  path = stringToPath(path);
+  // Don't substitute fallback mid-walk; if a segment is missing, stop and return fallback.
+  // This avoids "defaultValue becomes the next object" behavior on deeper paths.
+  const fallback = defaultValue === undefined ? null : defaultValue;
+  const segments = stringToPath(path);
+
+  // Defensive: keep behavior predictable for invalid/non-string paths.
+  if (!Array.isArray(segments) || segments.length === 0) return fallback;
 
   let value = source;
 
-  for (let i = 0; i < path.length; i++) {
-    value = value?.[path?.[i]] ?? defaultValue;
+  for (let i = 0; i < segments.length; i++) {
+    if (value === null || value === undefined) return fallback;
+
+    const key = segments[i];
+    const next = value[key];
+
+    if (next === undefined) return fallback;
+
+    value = next;
   }
 
-  return value;
+  return value === undefined ? fallback : value;
 };
 
 const setObjectProperties = (data = {}, property = {}) => {

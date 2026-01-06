@@ -51,7 +51,7 @@ pnpm add file:../mapper
 Import function:
 
 ```js
-const { mapping } = require("./src/mapper");
+const { mapping } = require("mapper");
 ```
 
 Define a schema and run mapping:
@@ -129,7 +129,7 @@ Each key in `mapSchema` represents a source path. The value decides how that sou
 - **Object rule**: `{ key, defaultValue, transform }`
   - `key` (string): destination path
   - `defaultValue` (any): used when source path is missing or when `transform` returns `undefined`
-  - `transform` (function): called as `transform({ source, value })`
+  - `transform` (function): called as `transform({ source, value })` (synchronous)
 - **Array of rules**: apply multiple rules to the same source key
   - Example: `{ id: ["userId", "audit.id"] }`
 

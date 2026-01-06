@@ -2,6 +2,14 @@ import { describe, it, expect } from "vitest";
 import { mapping, _internal } from "../src/mapper";
 
 describe("mapper", () => {
+  it("should expose only mapping via package entrypoint", async () => {
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    const entry = require("../src");
+
+    expect(entry.mapping).toBeTypeOf("function");
+    expect("_internal" in entry).toBe(false);
+  });
+
   it("should be able to map a simple object to another", async () => {
     const src = {
       foo: "foo",
@@ -181,6 +189,36 @@ describe("mapper", () => {
     expect(result.out).eq("D");
   });
 
+  it("should use defaultValue when a mid-path segment is missing", async () => {
+    const src = { a: {} };
+
+    const mapSchema = {
+      "a.b.c": {
+        key: "out",
+        defaultValue: "D",
+      },
+    };
+
+    const result = await mapping(src, mapSchema);
+
+    expect(result.out).eq("D");
+  });
+
+  it("should use defaultValue when a mid-path segment is a primitive", async () => {
+    const src = { a: "x" };
+
+    const mapSchema = {
+      "a.b": {
+        key: "out",
+        defaultValue: "D",
+      },
+    };
+
+    const result = await mapping(src, mapSchema);
+
+    expect(result.out).eq("D");
+  });
+
   it("should map missing source to null when no defaultValue", async () => {
     const src = {};
 
@@ -234,13 +272,13 @@ describe("mapper", () => {
     expect(result.out).eq("B");
   });
 
-  it("should re-export mapper module from index", async () => {
-    const { mapper } = await import("../src/index.js");
+  it("should expose mapping via package entrypoint", async () => {
+    const entry = await import("../src/index.js");
 
-    expect(mapper).toBeTypeOf("object");
-    expect(mapper.mapping).toBeTypeOf("function");
+    expect(entry.mapping).toBeTypeOf("function");
+    expect(entry._internal).toBeUndefined();
 
-    const result = await mapper.mapping({ foo: "x" }, { foo: "bar" });
+    const result = await entry.mapping({ foo: "x" }, { foo: "bar" });
     expect(result.bar).eq("x");
   });
 
