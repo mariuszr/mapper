@@ -137,6 +137,22 @@ describe("mapper", () => {
     expect(result.tags).deep.eq(["a", "b", "c"]);
   });
 
+  it("should coerce existing scalar to array when using []", async () => {
+    const src = {
+      a: "a",
+      b: "b",
+    };
+
+    const mapSchema = {
+      a: "tags",
+      b: "tags[]",
+    };
+
+    const result = await mapping(src, mapSchema);
+
+    expect(result.tags).deep.eq(["a", "b"]);
+  });
+
   it("should support array-of-rules for one source key", async () => {
     const src = {
       foo: "foo",
@@ -324,6 +340,21 @@ describe("mapper", () => {
     expect(result).deep.eq({});
   });
 
+  it("should ignore non-string destination key in rule object", async () => {
+    const src = { foo: "x" };
+
+    const mapSchema = {
+      foo: {
+        // @ts-expect-error - intentional invalid schema test
+        key: 123,
+      },
+    };
+
+    const result = await mapping(src, mapSchema);
+
+    expect(result).deep.eq({});
+  });
+
   it("should create intermediate objects when setting nested keys", async () => {
     const src = { foo: "x" };
 
@@ -334,6 +365,23 @@ describe("mapper", () => {
     const result = await mapping(src, mapSchema);
 
     expect(result.a.b.c).eq("x");
+  });
+
+  it("should ignore nested destination writes when path conflicts with primitive", async () => {
+    const src = {
+      a: "A",
+      b: "B",
+    };
+
+    const mapSchema = {
+      a: "out",
+      b: "out.nested",
+    };
+
+    const result = await mapping(src, mapSchema);
+
+    expect(result.out).eq("A");
+    expect(result.out?.nested).toBeUndefined();
   });
 
   it("should throw when source is not a plain object", async () => {

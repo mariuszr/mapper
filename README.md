@@ -185,6 +185,8 @@ const out = await mapping(src, mapSchema);
 ## Notes
 
 - `mapping()` is intentionally small and focused. If a schema entry is `null`/number/boolean, it will be ignored.
+- If a destination path conflicts with an existing non-object value (e.g. `out` is a string but you try to set `out.nested`), that write is ignored.
+- For `[]` appends, existing non-array values are coerced into arrays (to preserve existing values).
 - Internals (like caching) are not part of the public API and may change.
 
 ## Development

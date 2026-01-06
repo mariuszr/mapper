@@ -67,38 +67,57 @@ const getObjectPropertyValue = (source, path, defaultValue) => {
 };
 
 const setObjectProperties = (data = {}, property = {}) => {
-  if (data && property) {
-    let { key, value } = property;
-    let dataStack = data;
+  if (!data || !property) return;
 
-    const isArray = regexEmptyBrackets.test(key) || false;
+  let { key, value } = property;
+  let dataStack = data;
 
-    if (isArray) {
-      key = key?.replace(regexEmptyBrackets, "");
+  if (typeof key !== "string" || key.trim().length === 0) return;
+
+  const isArray = regexEmptyBrackets.test(key) || false;
+
+  if (isArray) {
+    key = key.replace(regexEmptyBrackets, "");
+  }
+
+  const propertyStack = stringToPath(key);
+  if (!Array.isArray(propertyStack) || propertyStack.length === 0) return;
+
+  for (let i = 0; i < propertyStack.length - 1; i++) {
+    const segment = propertyStack[i];
+    if (!segment) return;
+
+    const existing = dataStack[segment];
+
+    if (existing === undefined) {
+      dataStack[segment] = {};
+      dataStack = dataStack[segment];
+      continue;
     }
 
-    const propertyStack = stringToPath(key);
+    // If we're trying to set `a.b.c`, but `a` is already a primitive, ignore the write.
+    if (!isPlainObject(existing)) return;
 
-    for (let i = 0; i < propertyStack.length - 1; i++) {
-      const property = propertyStack[i];
-      if (dataStack[property] === undefined) dataStack[property] = {};
-      dataStack = dataStack[property];
-    }
+    dataStack = existing;
+  }
 
-    const nameStack = propertyStack[propertyStack.length - 1];
+  const nameStack = propertyStack[propertyStack.length - 1];
+  if (!nameStack) return;
 
-    if (nameStack) {
-      if ([undefined].includes(value)) {
-        value = null;
-      }
+  if (value === undefined) value = null;
 
-      if (isArray) {
-        const arrayValue = Array.isArray(value) ? value : [value];
-        dataStack[nameStack] = [...(dataStack[nameStack] ?? []), ...arrayValue];
-      } else {
-        dataStack[nameStack] = value;
-      }
-    }
+  if (isArray) {
+    const arrayValue = Array.isArray(value) ? value : [value];
+    const existing = dataStack[nameStack];
+
+    const existingArray = Array.isArray(existing)
+      ? existing
+      : existing === undefined
+        ? []
+        : [existing];
+    dataStack[nameStack] = [...existingArray, ...arrayValue];
+  } else {
+    dataStack[nameStack] = value;
   }
 };
 
