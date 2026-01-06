@@ -1,6 +1,7 @@
 # Mapper
 
 [![CI](https://github.com/mariuszr/mapper/actions/workflows/ci.yml/badge.svg)](https://github.com/mariuszr/mapper/actions/workflows/ci.yml)
+[![Release](https://img.shields.io/github/v/release/mariuszr/mapper)](https://github.com/mariuszr/mapper/releases)
 [![License](https://img.shields.io/github/license/mariuszr/mapper)](LICENSE)
 [![Last commit](https://img.shields.io/github/last-commit/mariuszr/mapper)](https://github.com/mariuszr/mapper/commits)
 [![Issues](https://img.shields.io/github/issues/mariuszr/mapper)](https://github.com/mariuszr/mapper/issues)
